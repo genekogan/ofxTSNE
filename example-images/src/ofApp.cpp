@@ -71,13 +71,6 @@ void ofApp::keyPressed(int key){
         float theta = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, TWO_PI);
         imagePoints = tsne.run(encodings, 2, perplexity, theta);
     }
-    /*
-    if (key==OF_KEY_UP) {
-        zoom = ofClamp(zoom + 0.25, 1.0, 50.0);
-    }
-    else if (key==OF_KEY_DOWN) {
-        zoom = ofClamp(zoom - 0.25, 1.0, 50.0);
-    }*/
 }
 
 //--------------------------------------------------------------
