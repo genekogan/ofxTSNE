@@ -1,4 +1,4 @@
-## ofxTSNE
+# ofxTSNE
 
 ofxTSNE is an [addon](https://www.ofxaddons.com) for [openframeworks](https://www.openframeworks.cc) which wraps the [t-SNE](https://lvdmaaten.github.io/tsne/) (t-Distributed Stochastic Neighbor Embedding) algorithm by [Laurens van der Maaten](https://lvdmaaten.github.io). 
 
@@ -19,7 +19,7 @@ ofxTSNE is very simple to run, containing only one function. The harder part is 
 
 ![t-SNE images from Caltech-256](http://www.genekogan.com/images/misc/ofxTsne2.jpg)
 
-`example-images` applies t-SNE to a directory of images. It uses [ofxCcv](https://www.github.com/kylemcdonald/ofxCcv) to encode each image as a compact (4096-dim) feature vector derived from a convolutional neural net trained on ImageNet. The resulting representation captures high-level similarities among images, enabling ofxTSNE to group them effectively according more to content (e.g. images of cats get clustered together), relatively invariant to changes in color, lighting, position, etc. 
+`example-images` applies t-SNE to a directory of images. It uses [ofxCcv](https://www.github.com/kylemcdonald/ofxCcv) to encode each image as a compact (4096-dim) feature vector derived from a trained convolutional neural network. The resulting representation captures high-level similarities among images, enabling ofxTSNE to group them effectively according more to content (e.g. images of cats get clustered together), relatively invariant to changes in color, lighting, position, etc. 
 
 To run this example, you need to take a few extra steps.
 
