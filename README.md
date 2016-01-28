@@ -1,0 +1,35 @@
+## ofxTSNE
+
+ofxTSNE is an [addon](https://www.ofxaddons.com) for [openframeworks](https://www.openframeworks.cc) which wraps the [t-SNE](https://lvdmaaten.github.io/tsne/) (t-Distributed Stochastic Neighbor Embedding) algorithm by [Laurens van der Maaten](https://lvdmaaten.github.io). 
+
+t-SNE is a technique for reducing the dimensionality of large, high-dimension datasets, typically to 2 or 3 dimensions. It has a similar function to [Principal Component Analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (see [ofxPCA](https://github.com/atduskgreg/ofxPCA)) which reduces a dataset's dimensionality by reorienting it along its principal axes, but differs in that it tends to better preserve point-wise distances, making it more suitable for visualization of high-dimensional data.
+
+ofxTSNE is very simple to run, containing only one function. The harder part is getting data.
+
+### Examples
+
+#### basic example
+
+![t-SNE toy data](http://www.genekogan.com/images/misc/ofxTsne1.jpg)
+
+`example` demonstrates how to use ofxTSNE by constructing a toy 100-dim dataset. It contains comments explaining what the parameters do and how to set them.
+
+
+#### clustering images
+
+![t-SNE images from Caltech-256](http://www.genekogan.com/images/misc/ofxTsne2.jpg)
+
+`example-images` applies t-SNE to a directory of images. It uses [ofxCcv](https://www.github.com/kylemcdonald/ofxCcv) to encode each image as a compact (4096-dim) feature vector derived from a convolutional neural net trained on ImageNet. The resulting representation captures high-level similarities among images, enabling ofxTSNE to group them effectively according more to content (e.g. images of cats get clustered together), relatively invariant to changes in color, lighting, position, etc. 
+
+To run this example, you need to take a few extra steps.
+
+1) Get [ofxCcv](https://www.github.com/kylemcdonald/ofxCcv)
+	
+2) run the setup_ccv script to download the trained convnet.
+
+	sh setup_ccv.sh
+
+3) Then you need to populate a folder called 'images' inside your data folder. Be careful to use small-sized images because the entire directory will be loaded into memory. I've provided a script which downloads 20 images each from 31 categories in [Caltech-256](www.vision.caltech.edu/Image_Datasets/Caltech256/images/). If you'd like to download those, run:
+
+	python download_images.py
+	
