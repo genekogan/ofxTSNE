@@ -3,6 +3,12 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
+    // the runManually flag lets us step through each iteration of t-SNE manually,
+    // letting us watch the process take place. If set to false, the whole
+    // process will take place internally when you run ofxTSNE::run
+
+    runManually = true;
+    
     // first let's construct our toy dataset.
     // we will create N samples of dimension D, which will be distributed
     // into a number of classes, where a point belonging to a particular
@@ -13,8 +19,10 @@ void ofApp::setup(){
     // transforming them from high-dimensional to low-dimensional space, so
     // in this example, the classes are just for us to see this clearer.
     
+    
     // pick initial parameters
-    int N = 2000;               // number of points in our dataset
+    
+    int N = 1500;               // number of points in our dataset
     int D = 100;                // number of dimensions in our data
     int numClasses = 10;        // how many classes to create
     
@@ -100,28 +108,36 @@ void ofApp::setup(){
     // normalize = this will automatically remap all tsne points to range {0, 1}
     //   if false, you'll get the original points.
     
-    
     int dims = 2;
-    float perplexity = 30;
-    float theta = 0.5;
+    float perplexity = 40;
+    float theta = 0.2;
     bool normalize = true;
     
     // finally let's run ofxTSNE! this may take a while depending on your
     // data, and it will return a set of embedded points, structured as
     // a vector<vector<float> > where the inner vector contains (dims) elements.
     // We will unpack these points and assign them back to our testPoints dataset.
-    
-    vector<vector<float> > tsnePoints = tsne.run(data, dims, perplexity, theta, normalize);
 
-    // unpack the embedded points back into our testPoints
-    for (int i=0; i<N; i++) {
-        testPoints[i].tsnePoint = ofPoint(tsnePoints[i][0], tsnePoints[i][1]);
+    tsnePoints = tsne.run(data, dims, perplexity, theta, normalize, runManually);
+    
+    // if we didn't run manually, we can collect the points immediately
+    if (!runManually) {
+        for (int i=0; i<testPoints.size(); i++) {
+            testPoints[i].tsnePoint = ofPoint(tsnePoints[i][0], tsnePoints[i][1]);
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    // if we are running our t-SNE manually, we need to run tsne.iterate() to
+    // go through each iteration and collect the points where they currently are
+    if (runManually) {
+        tsnePoints = tsne.iterate();
+        for (int i=0; i<testPoints.size(); i++) {
+            testPoints[i].tsnePoint = ofPoint(tsnePoints[i][0], tsnePoints[i][1]);
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -130,7 +146,7 @@ void ofApp::draw(){
     for (int i=0; i<testPoints.size(); i++) {
         float x = ofGetWidth() * testPoints[i].tsnePoint.x;
         float y = ofGetHeight() * testPoints[i].tsnePoint.y;
-        ofSetColor(testPoints[i].color, 150);
+        ofSetColor(testPoints[i].color, 100);
         ofDrawEllipse(x, y, 8, 8);
     }
 }

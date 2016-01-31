@@ -31,4 +31,7 @@ class ofApp : public ofBaseApp{
     
     ofxTSNE tsne;
     vector<TestPoint> testPoints;
+    vector<vector<double> > tsnePoints;
+    
+    bool runManually;
 };

@@ -14,6 +14,7 @@ ofxTSNE is very simple to run, containing only one function. The harder part is 
 
 `example` demonstrates how to use ofxTSNE by constructing a toy 100-dim dataset. It contains comments explaining what the parameters do and how to set them.
 
+**clever hack**: try setting D=3 and instead of making points clustered around 10 centers, make the points random 3d points and map the point's color linearly from its 3d position. 
 
 #### clustering images
 

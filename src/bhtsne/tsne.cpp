@@ -46,24 +46,33 @@
 using namespace std;
 
 // Perform t-SNE
-void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta) {
+void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, bool runManually) {
+    this->X = X;
+    this->N = N;
+    this->D = D;
+    this->Y = Y;
+    this->no_dims = no_dims;
+    this->perplexity = perplexity;
+    this->theta = theta;
     
     // Determine whether we are using an exact algorithm
     if(N - 1 < 3 * perplexity) { printf("Perplexity too large for the number of data points!\n"); exit(1); }
     printf("Using no_dims = %d, perplexity = %f, and theta = %f\n", no_dims, perplexity, theta);
-    bool exact = (theta == .0) ? true : false;
+    exact = (theta == .0) ? true : false;
     
     // Set learning parameters
-    float total_time = .0;
-    clock_t start, end;
-	int max_iter = 1000, stop_lying_iter = 250, mom_switch_iter = 250;
-	double momentum = .5, final_momentum = .8;
-	double eta = 200.0;
+    total_time = .0;
+    max_iter = 1000;
+    stop_lying_iter = 250;
+    mom_switch_iter = 250;
+    momentum = .5;
+    final_momentum = .8;
+	eta = 200.0;
     
     // Allocate some memory
-    double* dY    = (double*) malloc(N * no_dims * sizeof(double));
-    double* uY    = (double*) malloc(N * no_dims * sizeof(double));
-    double* gains = (double*) malloc(N * no_dims * sizeof(double));
+    dY    = (double*) malloc(N * no_dims * sizeof(double));
+    uY    = (double*) malloc(N * no_dims * sizeof(double));
+    gains = (double*) malloc(N * no_dims * sizeof(double));
     if(dY == NULL || uY == NULL || gains == NULL) { printf("Memory allocation failed!\n"); exit(1); }
     for(int i = 0; i < N * no_dims; i++)    uY[i] =  .0;
     for(int i = 0; i < N * no_dims; i++) gains[i] = 1.0;
@@ -79,7 +88,6 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     for(int i = 0; i < N * D; i++) X[i] /= max_X;
     
     // Compute input similarities for exact t-SNE
-    double* P; unsigned int* row_P; unsigned int* col_P; double* val_P;
     if(exact) {
         
         // Compute similarities
@@ -130,45 +138,16 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     if(exact) printf("Input similarities computed in %4.2f seconds!\nLearning embedding...\n", (float) (end - start) / CLOCKS_PER_SEC);
     else printf("Input similarities computed in %4.2f seconds (sparsity = %f)!\nLearning embedding...\n", (float) (end - start) / CLOCKS_PER_SEC, (double) row_P[N] / ((double) N * (double) N));
     start = clock();
-	for(int iter = 0; iter < max_iter; iter++) {
-        
-        // Compute (approximate) gradient
-        if(exact) computeExactGradient(P, Y, N, no_dims, dY);
-        else computeGradient(P, row_P, col_P, val_P, Y, N, no_dims, dY, theta);
-        
-        // Update gains
-        for(int i = 0; i < N * no_dims; i++) gains[i] = (sign(dY[i]) != sign(uY[i])) ? (gains[i] + .2) : (gains[i] * .8);
-        for(int i = 0; i < N * no_dims; i++) if(gains[i] < .01) gains[i] = .01;
-            
-        // Perform gradient update (with momentum and gains)
-        for(int i = 0; i < N * no_dims; i++) uY[i] = momentum * uY[i] - eta * gains[i] * dY[i];
-		for(int i = 0; i < N * no_dims; i++)  Y[i] = Y[i] + uY[i];
-        
-        // Make solution zero-mean
-		zeroMean(Y, N, no_dims);
-        
-        // Stop lying about the P-values after a while, and switch momentum
-        if(iter == stop_lying_iter) {
-            if(exact) { for(int i = 0; i < N * N; i++)        P[i] /= 12.0; }
-            else      { for(int i = 0; i < row_P[N]; i++) val_P[i] /= 12.0; }
-        }
-        if(iter == mom_switch_iter) momentum = final_momentum;
-        
-        // Print out progress
-        if(iter > 0 && (iter % 50 == 0 || iter == max_iter - 1)) {
-            end = clock();
-            double C = .0;
-            if(exact) C = evaluateError(P, Y, N, no_dims);
-            else      C = evaluateError(row_P, col_P, val_P, Y, N, no_dims, theta);  // doing approximate computation here!
-            if(iter == 0)
-                printf("Iteration %d: error is %f\n", iter + 1, C);
-            else {
-                total_time += (float) (end - start) / CLOCKS_PER_SEC;
-                printf("Iteration %d: error is %f (50 iterations in %4.2f seconds)\n", iter, C, (float) (end - start) / CLOCKS_PER_SEC);
-            }
-			start = clock();
+    
+    iter = 0;
+    if (!runManually) {
+        while(iter < max_iter) {
+            runIteration();
         }
     }
+}
+
+void TSNE::finish() {
     end = clock(); total_time += (float) (end - start) / CLOCKS_PER_SEC;
     
     // Clean up memory
@@ -184,6 +163,55 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     printf("Fitting performed in %4.2f seconds.\n", total_time);
 }
 
+void TSNE::runIteration() {
+    
+    if (iter >= max_iter) {
+        return;
+    }
+    
+    // Compute (approximate) gradient
+    if(exact) computeExactGradient(P, Y, N, no_dims, dY);
+    else computeGradient(P, row_P, col_P, val_P, Y, N, no_dims, dY, theta);
+    
+    // Update gains
+    for(int i = 0; i < N * no_dims; i++) gains[i] = (sign(dY[i]) != sign(uY[i])) ? (gains[i] + .2) : (gains[i] * .8);
+    for(int i = 0; i < N * no_dims; i++) if(gains[i] < .01) gains[i] = .01;
+    
+    // Perform gradient update (with momentum and gains)
+    for(int i = 0; i < N * no_dims; i++) uY[i] = momentum * uY[i] - eta * gains[i] * dY[i];
+    for(int i = 0; i < N * no_dims; i++)  Y[i] = Y[i] + uY[i];
+    
+    // Make solution zero-mean
+    zeroMean(Y, N, no_dims);
+    
+    // Stop lying about the P-values after a while, and switch momentum
+    if(iter == stop_lying_iter) {
+        if(exact) { for(int i = 0; i < N * N; i++)        P[i] /= 12.0; }
+        else      { for(int i = 0; i < row_P[N]; i++) val_P[i] /= 12.0; }
+    }
+    if(iter == mom_switch_iter) momentum = final_momentum;
+    
+    // Print out progress
+    if(iter > 0 && (iter % 50 == 0 || iter == max_iter - 1)) {
+        end = clock();
+        double C = .0;
+        if(exact) C = evaluateError(P, Y, N, no_dims);
+        else      C = evaluateError(row_P, col_P, val_P, Y, N, no_dims, theta);  // doing approximate computation here!
+        if(iter == 0)
+            printf("Iteration %d: error is %f\n", iter + 1, C);
+        else {
+            total_time += (float) (end - start) / CLOCKS_PER_SEC;
+            printf("Iteration %d: error is %f (50 iterations in %4.2f seconds)\n", iter, C, (float) (end - start) / CLOCKS_PER_SEC);
+        }
+        start = clock();
+    }
+    
+    iter++;
+    
+    if (iter == max_iter) {
+        finish();
+    }
+}
 
 // Compute gradient of the t-SNE cost function (using Barnes-Hut algorithm)
 void TSNE::computeGradient(double* P, unsigned int* inp_row_P, unsigned int* inp_col_P, double* inp_val_P, double* Y, int N, int D, double* dC, double theta)

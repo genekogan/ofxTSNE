@@ -28,10 +28,12 @@ class ofApp : public ofBaseApp{
     ofxTSNE tsne;
     
     vector<ofImage> images;
-    vector<vector<float> > imagePoints;
+    vector<vector<double> > imagePoints;
     vector<vector<float> > encodings;
     
     ofxPanel gui;
     ofParameter<float> scale;
     ofParameter<float> imageSize;
+    
+    int t;
 };

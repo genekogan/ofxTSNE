@@ -41,13 +41,15 @@ static inline double sign(double x) { return (x == .0 ? .0 : (x < .0 ? -1.0 : 1.
 class TSNE
 {    
 public:
-    void run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta);
+    void run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, bool runManually=false);
+    void runIteration();
     bool load_data(double** data, int* n, int* d, int* no_dims, double* theta, double* perplexity, int* rand_seed);
     void save_data(double* data, int* landmarks, double* costs, int n, int d);
     void symmetrizeMatrix(unsigned int** row_P, unsigned int** col_P, double** val_P, int N); // should be static!
 
     
 private:
+    void finish();
     void computeGradient(double* P, unsigned int* inp_row_P, unsigned int* inp_col_P, double* inp_val_P, double* Y, int N, int D, double* dC, double theta);
     void computeExactGradient(double* P, double* Y, int N, int D, double* dC);
     double evaluateError(double* P, double* Y, int N, int D);
@@ -57,6 +59,20 @@ private:
     void computeGaussianPerplexity(double* X, int N, int D, unsigned int** _row_P, unsigned int** _col_P, double** _val_P, double perplexity, int K);
     void computeSquaredEuclideanDistance(double* X, int N, int D, double* DD);
     double randn();
+    
+    bool exact;
+    float total_time;
+    clock_t start, end;
+    int iter, max_iter, stop_lying_iter, mom_switch_iter;
+    double momentum, final_momentum;
+    double eta;
+    double* dY, *uY, *gains;
+    double* P, *val_P;
+    unsigned int *row_P, *col_P;
+    
+    double *X, *Y;
+    int N, D, no_dims;
+    double perplexity, theta;
 };
 
 #endif
