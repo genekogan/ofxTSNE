@@ -65,12 +65,6 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key==' ') {
-        // rerun tsne
-        float perplexity = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 200);
-        float theta = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, TWO_PI);
-        imagePoints = tsne.run(encodings, 2, perplexity, theta);
-    }
 }
 
 //--------------------------------------------------------------
