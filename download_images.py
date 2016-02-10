@@ -8,7 +8,7 @@ categories_animals = [ [7, "bat"], [9, "bear"], [15, "bonsai-101"], [24, "butter
 
 # set parameters
 num_images_per_category = 40
-root_dir = 'example-images/bin/data/images22'
+root_dir = 'example-images/bin/data/images'
 categories = categories_random
 
 
