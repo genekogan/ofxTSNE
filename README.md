@@ -37,8 +37,8 @@ To run this example, you need to take a few extra steps.
 Or if you want to download a set of animals from the same source, open `download_images.py` and change the line `categories = categories_random` to `categories = categories_animals`. 
 
 
-#### Gridding clusters
+#### gridding images 
 
-You can easily find an optimal 2d grid which preserves your t-SNE clusters using a 2d assignment algorithm. [@Quasimondo's RasterFairy](https://github.com/Quasimondo/RasterFairy) or [Kyle McDonald's ofxAssignment](https://github.com/kylemcdonald/ofxAssignment) will work, or something similar. Applying RasterFairy to a t-SNE of the animals subset from Caltech-256 (see `download_images.py`), you get a result that looks like the following:
+`example-imagesGrid` is exactly as above but adds an extra step of assigning the t-SNE points to a grid and saving the output (as in below), using [ofxAssignment](https://github.com/kylemcdonald/ofxAssignment).
 
 ![t-SNE animals grid](https://c2.staticflickr.com/2/1511/24873243915_dd5220e41c_k.jpg)
