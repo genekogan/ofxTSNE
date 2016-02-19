@@ -39,6 +39,6 @@ Or if you want to download a set of animals from the same source, open `download
 
 #### gridding images 
 
-`example-imagesGrid` is exactly as above but adds an extra step of assigning the t-SNE points to a grid and saving the output (as in below), using [ofxAssignment](https://github.com/kylemcdonald/ofxAssignment).
+`example-imagesGrid` is exactly as above but adds an extra step of assigning the t-SNE points to a grid and saving the output (as in below, [see here for high-res](https://www.flickr.com/photos/genekogan/24873243915/in/dateposted-public/)), using [ofxAssignment](https://github.com/kylemcdonald/ofxAssignment).
 
 ![t-SNE animals grid](https://c2.staticflickr.com/2/1511/24873243915_dd5220e41c_k.jpg)
