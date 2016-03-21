@@ -25,14 +25,17 @@ void ofApp::setup(){
     // SETUP
     // imageDir, imageSavePath = location of images, path to save the final grid image
     // nx, ny = size of the grid (make sure there are at least nx*ny images in imageDir!)
-    // w, h = size of the image thumbnails
+    // w, h = downsample (or scale up) for source images prior to encoding!
+    // displayW, displayH = resolution of the individual thumbnails for your output image - be careful about going over your maximum texture size on graphics card - 5000x5000 may work, but 10000x10000 may not
     // perplexity, theta (for t-SNE, see 'example' for explanation of these)
     string imageDir = "/Users/gene/Media/ImageSets/animals";
     string imageSavePath = "tsne_grid_animals.png";
     nx = 48;
     ny = 36;
-    w = 100;
-    h = 100;
+    w = 256; //do not go lower than 256 - it will work, but results won't be as good
+    h = 256;
+    displayW = 100;
+    displayH = 100;
     perplexity = 75;
     theta = 0.001;
 
@@ -90,14 +93,14 @@ void ofApp::setup(){
     
     // save
     ofFbo fbo;
-    fbo.allocate(nx * w, ny * h);
+    fbo.allocate(nx * displayW, ny * displayH);
     fbo.begin();
     ofClear(0, 0);
     ofBackground(0);
     for (int i=0; i<solvedGrid.size(); i++) {
-        float x = (fbo.getWidth() - w) * solvedGrid[i].x;
-        float y = (fbo.getHeight() - h) * solvedGrid[i].y;
-        images[i].draw(x, y, w, h);
+        float x = (fbo.getWidth() - displayW) * solvedGrid[i].x;
+        float y = (fbo.getHeight() - displayH) * solvedGrid[i].y;
+        images[i].draw(x, y, displayW, displayH);
     }
     fbo.end();
     ofImage img;

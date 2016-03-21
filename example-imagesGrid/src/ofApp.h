@@ -39,6 +39,7 @@ public:
     
     int nx, ny;
     int w, h;
+    int displayW, displayH;
     float perplexity, theta;
     
     ofxPanel gui;
