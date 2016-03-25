@@ -36,8 +36,8 @@ void ofApp::setup(){
     h = 256;
     displayW = 100;
     displayH = 100;
-    perplexity = 75;
-    theta = 0.001;
+    perplexity = 50; // corresponds to "number of neighbors", somewhere in the range 10-100 is good
+    theta = 0.5; // lower is more "accurate" but takes longer, don't need to change this
 
     
     /////////////////////////////////////////////////////////////////////
