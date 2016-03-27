@@ -23,8 +23,9 @@ num_images_per_category = 40
 root_dir = 'example-images/bin/data/images'
 
 # or use command line arguments
-
-if args.dataset == "animals":
+if args.dataset == "random":
+	categories = categories_random
+elif args.dataset == "animals":
 	categories = categories_animals
 elif args.dataset == "both":
 	categories += categories_animals
