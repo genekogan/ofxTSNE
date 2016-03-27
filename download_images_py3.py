@@ -33,7 +33,8 @@ if args.num:
 	num_images_per_category = args.num
 
 if args.dir:
-	root_dir += "/" + args.dir
+	os.system('mkdir %s' % root_dir)
+	root_dir += '/' + args.dir
 
 
 #run
