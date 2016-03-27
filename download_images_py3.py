@@ -28,7 +28,7 @@ if args.dataset == "random":
 elif args.dataset == "animals":
 	categories = categories_animals
 elif args.dataset == "both":
-	categories += categories_animals
+	categories = cateogies_random + categories_animals
 
 if args.num:
 	num_images_per_category = args.num
