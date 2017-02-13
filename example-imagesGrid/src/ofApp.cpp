@@ -56,7 +56,7 @@ void ofApp::setup(){
     for(int i=0; i<nx*ny; i++) {
         if (i % 20 == 0)    ofLog() << " - loading image "<<i<<" / "<<nx*ny<<" ("<<dir.size()<<" in dir)";
         images.push_back(ofImage());
-        images.back().load(imageFiles[i]);
+        images.back().load(imageFiles[i].getAbsolutePath());
     }
 
     // resize images to w x h
