@@ -21,17 +21,17 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
+
     struct TestPoint {
-        int class_;
+        size_t class_;
         ofColor color;
         vector<float> point;
         ofPoint tsnePoint;
     };
-    
+
     ofxTSNE tsne;
     vector<TestPoint> testPoints;
     vector<vector<double> > tsnePoints;
-    
+
     bool runManually;
 };
